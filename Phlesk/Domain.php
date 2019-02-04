@@ -8,10 +8,13 @@
             return \Phlesk::getAllDomains($mainDomainsOnly);
         }
 
-        public static function getByGuid(String $domain_guid) {
+        /**
+            - param should be string, not enforced by pm_domain::getByGuid
+        */
+        public static function getByGuid($domain_guid) {
             pm_Log::err("Use Phlesk::getDomainByGuid()");
 
-            return \Phlesk::getDomainByGuid($domain_guid);
+            return \Phlesk::getDomainByGuid((String)$domain_guid);
         }
 
         public function hasHosting() {
