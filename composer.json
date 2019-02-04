@@ -1,0 +1,17 @@
+{
+    "name": "kolab/phlesk",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kolab-groupware/pm-api-stubs"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "Phlesk"
+        ]
+    },
+    "require-dev": {
+        "plesk/pm-api-stubs": "dev-master"
+    }
+}
