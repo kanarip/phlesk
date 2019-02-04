@@ -3,7 +3,7 @@
 
     class Domain extends \pm_Domain {
         public static function getAllDomains($mainDomainsOnly = FALSE) {
-            pm_Log::err("Use Phlesk::getAllDomains()");
+            \pm_Log::err("Use Phlesk::getAllDomains()");
 
             return \Phlesk::getAllDomains($mainDomainsOnly);
         }
@@ -12,7 +12,7 @@
             - param should be string, not enforced by pm_domain::getByGuid
         */
         public static function getByGuid($domain_guid) {
-            pm_Log::err("Use Phlesk::getDomainByGuid()");
+            \pm_Log::err("Use Phlesk::getDomainByGuid()");
 
             return \Phlesk::getDomainByGuid((String)$domain_guid);
         }
