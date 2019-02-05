@@ -4,7 +4,7 @@
             return \Phlesk\Context::in($target);
         }
 
-        public statuc function contextOut($target, $return = NULL) {
+        public static function contextOut($target, $return = NULL) {
             return \Phlesk\Context::out($target, $return);
         }
 
