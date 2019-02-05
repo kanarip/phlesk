@@ -1,5 +1,13 @@
 <?php
     class Phlesk {
+        public static function contextIn($target) {
+            return \Phlesk\Context::in($target);
+        }
+
+        public statuc function contextOut($target, $return = NULL) {
+            return \Phlesk\Context::out($target, $return);
+        }
+
         public static function getDomainByGuid($domain_guid) {
             $domains = \Phlesk::getAllDomains();
 
@@ -10,6 +18,17 @@
             }
 
             return NULL;
+        }
+
+        /**
+            Get a domain by its numeric identifier.  Really, you could just use:
+
+                $domain = new\Phlesk\Domain($domain_id);
+        */
+        public static function getDomainById($domain_id) {
+            $domain = new \Phlesk\Domain($domain_id);
+
+            return $domain;
         }
 
         public static function getDomainByName($domain_name) {
