@@ -22,4 +22,9 @@
 
             return parent::hasHosting();
         }
+
+        public function hasMailService() {
+            \pm_Log::err("Not yet implemented: Phlesk\Domain->hasMailService()");
+            return TRUE;
+        }
     }

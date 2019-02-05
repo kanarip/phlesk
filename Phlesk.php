@@ -20,13 +20,29 @@
             return $domain;
         }
 
-        public static function getAllDomains($mainDomainsOnly = FALSE) {
+        /**
+
+            @param $main    Only return domains that are primary domains for a subscription.
+            @param $hosting Only return domains that have hosting enabled.
+            @param $mail    Only return domains that have mail service enabled.
+        */
+        public static function getAllDomains($main = FALSE, $hosting = FALSE, $mail = FALSE) {
             $domains = Array();
 
-            $pm_domains = \pm_Domain::getAllDomains($mainDomainsOnly);
+            $pm_domains = \pm_Domain::getAllDomains($main);
 
             foreach ($pm_domains as $pm_domain) {
-                $domains[] = new \Phlesk\Domain($pm_domain->getId());
+                $domain = new \Phlesk\Domain($pm_domain->getId());
+
+                if ($hosting && !$domain->hasHosting()) {
+                    continue;
+                }
+
+                if ($mail && !$domain->hasMailService()) {
+                    continue;
+                }
+
+                $domains[] = $domain;
             }
 
             return $domains;
