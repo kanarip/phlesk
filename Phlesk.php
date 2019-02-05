@@ -1,6 +1,6 @@
 <?php
     class Phlesk {
-        static function getDomainByGuid($domain_guid) {
+        public static function getDomainByGuid($domain_guid) {
             $domains = \Phlesk::getAllDomains();
 
             foreach ($domains as $domain) {
@@ -12,6 +12,13 @@
             return NULL;
         }
 
+        public static function getDomainByName($domain_name) {
+            $pm_domain = \pm_Domain::getByName($domain_name);
+
+            $domain = \Phlesk\Domain($pm_domain->getId());
+
+            return $domain;
+        }
 
         public static function getAllDomains($mainDomainsOnly = FALSE) {
             $domains = Array();
