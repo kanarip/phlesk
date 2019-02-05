@@ -13,6 +13,9 @@
         ]
     },
     "require-dev": {
-        "plesk/pm-api-stubs": "dev-master"
+        "plesk/pm-api-stubs": "dev-master",
+        "doctrine/annotations": "^1.6",
+        "jms/serializer": "1.7.*",
+        "phpdocumentor/phpdocumentor": "^2.9"
     }
 }

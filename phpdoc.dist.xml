@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2019 Kolab Systems AG. All rights reserved. -->
+<phpdoc>
+    <title>Phlesk Documentation - Plesk 17.9</title>title>
+    <parser>
+        <target>docs</target>
+    </parser>
+    <transformer>
+        <target>docs</target>
+    </transformer>
+    <files>
+        <file>Phlesk.php</file>
+        <directory>Phlesk</directory>
+    </files>
+</phpdoc>

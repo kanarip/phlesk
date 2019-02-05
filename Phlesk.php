@@ -1,13 +1,86 @@
 <?php
+    /**
+        Welcome to Phlesk.
+
+        Hope you enjoy ;-)
+    */
+
+    /**
+        Main class. Static utility functions mostly.
+    */
     class Phlesk {
+
+        /**
+            Switch the context from the current \pm_Context to the target context.
+
+            Note it only switches context if necessary.
+
+            Use this to ensure extensions calling functions of one another do not incidentally
+            operate in the incorrect context.
+
+            Note: It should be considered the responsibility of the target extension to ensure the
+            context in which it operates is the correct context, and at or near the end of the
+            function, it is also responsible for switching the context back to the original.
+
+            @param String $target   The string representation of the target context, i.e. "kolab",
+                                    "seafile", etc.
+
+            @return String  The name of the current context.
+        */
         public static function contextIn($target) {
             return \Phlesk\Context::in($target);
         }
 
+        /**
+            Switch out of the current \pm_ontext back to an original context.
+
+            Note it only switches context if necessary.
+
+            Use in conjunction with \Phlesk::contextIn() which returns a string representing the
+            original context:
+
+            ```php
+              function foo() {
+                  $module = \Phlesk::contextIn("mymodule");
+
+                  // (... do work in the mymodule context ...)
+
+                  \Phlesk::contextOut($module);
+              }
+            ```
+
+            You may specify an intended return value, such that you can reduce the code footprint:
+
+            ```php
+              function foo() {
+                  $module = \Phlesk::contextIn("mymodule");
+
+                  // (... do work in the mymodule context ...)
+
+                  $result = $retval >= 1 ? FALSE : TRUE;
+
+                  return \Phlesk::contextOut($module, $result);
+              }
+            ```
+
+            @param String $target   The string representation of the target context, hopefully the
+                                    correct one to switch back to after your work is done.
+
+            @param Mixed $return    Return this value after switching contexts.
+
+            @return Mixed   Returns the value of $return.
+        */
         public static function contextOut($target, $return = NULL) {
             return \Phlesk\Context::out($target, $return);
         }
 
+        /**
+            Get a \Phlesk\Domain using its GUID.
+
+            @param String $domain_guid  The GUID of the domain to find and return.
+
+            @return \Phlesk\Domain|NULL
+        */
         public static function getDomainByGuid($domain_guid) {
             $domains = \Phlesk::getAllDomains();
 
@@ -21,9 +94,15 @@
         }
 
         /**
-            Get a domain by its numeric identifier.  Really, you could just use:
+            Get a \Phlesk\Domain by its numeric identifier.  Really, you could just use:
 
-                $domain = new\Phlesk\Domain($domain_id);
+            ```php
+              $domain = new\Phlesk\Domain($domain_id);
+            ```
+
+            @param Int $domain_id
+
+            @return \Phlesk\Domain
         */
         public static function getDomainById($domain_id) {
             $domain = new \Phlesk\Domain($domain_id);
@@ -31,6 +110,13 @@
             return $domain;
         }
 
+        /**
+            Get a \Phlesk\Domain by its name.
+
+            @param String $domain_name
+
+            @return \Phlesk\Domain
+        */
         public static function getDomainByName($domain_name) {
             $pm_domain = \pm_Domain::getByName($domain_name);
 
@@ -40,10 +126,13 @@
         }
 
         /**
+            Obtain a list of domains.
 
-            @param $main    Only return domains that are primary domains for a subscription.
-            @param $hosting Only return domains that have hosting enabled.
-            @param $mail    Only return domains that have mail service enabled.
+            @param Bool $main       Only return domains that are primary domains for a subscription.
+            @param Bool $hosting    Only return domains that have hosting enabled.
+            @param Bool $mail       Only return domains that have mail service enabled.
+
+            @return Array   Returns a list of \Phlesk\Domain objects.
         */
         public static function getAllDomains($main = FALSE, $hosting = FALSE, $mail = FALSE) {
             $domains = Array();
