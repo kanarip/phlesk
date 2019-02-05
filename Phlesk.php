@@ -34,7 +34,7 @@
         public static function getDomainByName($domain_name) {
             $pm_domain = \pm_Domain::getByName($domain_name);
 
-            $domain = \Phlesk\Domain($pm_domain->getId());
+            $domain = new \Phlesk\Domain($pm_domain->getId());
 
             return $domain;
         }
