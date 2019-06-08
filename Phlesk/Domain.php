@@ -57,6 +57,10 @@
         public static function getByDomainId($domain_id) {
             \pm_Log::warn("Use Phlesk::getDomainById()");
 
+            if ((Integer)$domain_id !== $domain_id) {
+                \pm_Log::warn('\Phlesk\Domain parameter \$domain_id should be an Integer.');
+            }
+
             return \Phlesk::getDomainById((Integer)$domain_id);
         }
 

@@ -104,7 +104,7 @@
 
             @return \Phlesk\Domain
         */
-        public static function getDomainById($domain_id) {
+        public static function getDomainById(Integer $domain_id) {
             $domain = new \Phlesk\Domain($domain_id);
 
             return $domain;
