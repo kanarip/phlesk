@@ -54,7 +54,7 @@
             @param Integer $domain_id  The ID.
             @return \Phlesk\Domain|NULL
         */
-        public static function getByDomainId(Integer $domain_id) {
+        public static function getByDomainId($domain_id) {
             \pm_Log::warn("Use Phlesk::getDomainById()");
 
             return \Phlesk::getDomainById((Integer)$domain_id);
