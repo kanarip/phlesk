@@ -32,7 +32,7 @@
         }
 
         /**
-            Switch out of the current \pm_ontext back to an original context.
+            Switch out of the current \pm_Context back to an original context.
 
             Note it only switches context if necessary.
 
@@ -97,7 +97,7 @@
             Get a \Phlesk\Domain by its numeric identifier.  Really, you could just use:
 
             ```php
-              $domain = new\Phlesk\Domain($domain_id);
+               $domain = new \Phlesk\Domain($domain_id);
             ```
 
             @param Int $domain_id

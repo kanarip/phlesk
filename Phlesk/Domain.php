@@ -37,10 +37,27 @@
             @param String $domain_guid  The GUID.
             @return \Phlesk\Domain|NULL
         */
-        public static function getByGuid($domain_guid) {
+        public static function getByGuid(String $domain_guid) {
             \pm_Log::warn("Use Phlesk::getDomainByGuid()");
 
             return \Phlesk::getDomainByGuid((String)$domain_guid);
+        }
+
+        /**
+            Override \pm_Domain::getByDomainId().
+
+            Do not use this function. Instead use \Phlesk::getDomainById();
+
+            Needed because \pm_Domain::getByDomainId() will happily log an error rather than simply
+            return NULL.
+
+            @param Integer $domain_id  The ID.
+            @return \Phlesk\Domain|NULL
+        */
+        public static function getByDomainId(Integer $domain_id) {
+            \pm_Log::warn("Use Phlesk::getDomainById()");
+
+            return \Phlesk::getDomainById((Integer)$domain_id);
         }
 
         /**
