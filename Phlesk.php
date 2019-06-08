@@ -81,7 +81,7 @@
 
             @return \Phlesk\Domain|NULL
         */
-        public static function getDomainByGuid($domain_guid) {
+        public static function getDomainByGuid(String $domain_guid) {
             $domains = \Phlesk::getAllDomains();
 
             foreach ($domains as $domain) {

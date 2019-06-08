@@ -37,8 +37,12 @@
             @param String $domain_guid  The GUID.
             @return \Phlesk\Domain|NULL
         */
-        public static function getByGuid(String $domain_guid) {
+        public static function getByGuid($domain_guid) {
             \pm_Log::warn("Use Phlesk::getDomainByGuid()");
+
+            if ((String)$domain_guid !== $domain_guid) {
+                \pm_Log::warn('\Phlesk\Domain parameter \$domain_guid should be a String.');
+            }
 
             return \Phlesk::getDomainByGuid((String)$domain_guid);
         }
