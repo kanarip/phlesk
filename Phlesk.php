@@ -75,6 +75,60 @@
         }
 
         /**
+            Execute a command with error control.
+        */
+        public static function exec(
+            String $command,
+            Array $arguments = [],
+            Bool $tolerant = FALSE) {
+
+            $result = \pm_ApiCli::callSbin($command, $arguments, \pm_ApiCli::RESULT_FULL);
+
+            if ($result['code'] != 0 && !$tolerant) {
+                pm_Log::err(
+                    "Error executing: '" . $command . " " . implode(' ', $arguments) . "'"
+                );
+
+                pm_Log::err(
+                    "stderr: " . $result['stderr']
+                );
+            }
+
+            return $result;
+        }
+
+        /**
+            Obtain a list of domains.
+
+            @param Bool $main       Only return domains that are primary domains for a subscription.
+            @param Bool $hosting    Only return domains that have hosting enabled.
+            @param Bool $mail       Only return domains that have mail service enabled.
+
+            @return Array   Returns a list of \Phlesk\Domain objects.
+        */
+        public static function getAllDomains($main = FALSE, $hosting = FALSE, $mail = FALSE) {
+            $domains = Array();
+
+            $pm_domains = \pm_Domain::getAllDomains($main);
+
+            foreach ($pm_domains as $pm_domain) {
+                $domain = new \Phlesk\Domain($pm_domain->getId());
+
+                if ($hosting && !$domain->hasHosting()) {
+                    continue;
+                }
+
+                if ($mail && !$domain->hasMailService()) {
+                    continue;
+                }
+
+                $domains[] = $domain;
+            }
+
+            return $domains;
+        }
+
+        /**
             Get a \Phlesk\Domain using its GUID.
 
             @param String $domain_guid  The GUID of the domain to find and return.
@@ -126,33 +180,9 @@
         }
 
         /**
-            Obtain a list of domains.
-
-            @param Bool $main       Only return domains that are primary domains for a subscription.
-            @param Bool $hosting    Only return domains that have hosting enabled.
-            @param Bool $mail       Only return domains that have mail service enabled.
-
-            @return Array   Returns a list of \Phlesk\Domain objects.
+            Get domains for a client.
         */
-        public static function getAllDomains($main = FALSE, $hosting = FALSE, $mail = FALSE) {
-            $domains = Array();
-
-            $pm_domains = \pm_Domain::getAllDomains($main);
-
-            foreach ($pm_domains as $pm_domain) {
-                $domain = new \Phlesk\Domain($pm_domain->getId());
-
-                if ($hosting && !$domain->hasHosting()) {
-                    continue;
-                }
-
-                if ($mail && !$domain->hasMailService()) {
-                    continue;
-                }
-
-                $domains[] = $domain;
-            }
-
-            return $domains;
+        public static function getDomainsByClient(\pm_Client $client, $mainOnly = FALSE) {
+            return \pm_Domain::getDomainsByClient($client, $mainOnly);
         }
     }
