@@ -1,0 +1,2 @@
+stylecheck:
+	phpcs ./

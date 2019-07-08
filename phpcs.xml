@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="Phlesk">
+	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+	<description>A custom ruleset</description>
+
+	<rule ref="PSR2">
+		<!-- <exclude name="PEAR.Functions.FunctionCallSignature.Indent" /> -->
+	</rule>
+
+	<!-- Doc block alignments -->
+	<rule ref="Squiz.Commenting.DocCommentAlignment" />
+</ruleset>
