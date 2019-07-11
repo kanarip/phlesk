@@ -10,7 +10,10 @@
         "classmap": [
             "Phlesk",
             "Phlesk.php"
-        ]
+        ],
+        "psr-4": {
+            "Phlesk\\": "src/"
+        }
     },
     "require-dev": {
         "plesk/pm-api-stubs": "dev-master",
