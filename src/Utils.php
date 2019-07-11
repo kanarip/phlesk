@@ -7,7 +7,7 @@ namespace Phlesk;
  */
 class Utils
 {
-    private static function getSubscriptionDomains(pm_Domain $domain)
+    public static function getSubscriptionDomains(pm_Domain $domain)
     {
         // No way up to the subscription, go through client
         $client = $domain->getClient();
@@ -38,7 +38,7 @@ class Utils
     /**
      * Set the permission default value depending plesk edition.
      */
-    private static function initPermissionDefault()
+    public static function initPermissionDefault()
     {
         if (!isSubscriptionManagementAvailable()) {
             pm_Settings::set('permission-default', 1);
