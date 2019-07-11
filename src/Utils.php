@@ -40,7 +40,7 @@ class Utils
      */
     public static function initPermissionDefault()
     {
-        if (!isSubscriptionManagementAvailable()) {
+        if (!self::isSubscriptionManagementAvailable()) {
             pm_Settings::set('permission-default', 1);
         } else {
             // Without any domains, we can set the permission systems' default
