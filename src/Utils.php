@@ -7,7 +7,7 @@ namespace Phlesk;
  */
 class Utils
 {
-    public static function getSubscriptionDomains(pm_Domain $domain)
+    public static function getSubscriptionDomains(\pm_Domain $domain)
     {
         // No way up to the subscription, go through client
         $client = $domain->getClient();
