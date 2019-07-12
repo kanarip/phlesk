@@ -64,4 +64,26 @@ class Utils
         // Remove legacy permissions-default
         \pm_Settings::set('permissions-default', null);
     }
+
+    public static function exec($command = Array(), $tolerant = FALSE) {
+        \pm_Log::debug("phlesk-execute: " . var_export($command, TRUE));
+
+        $result = \pm_ApiCli::callSbin(
+            "mattermost-execute",
+            $command,
+            \pm_ApiCli::RESULT_FULL
+        );
+
+        if ($result['code'] != 0 && !$tolerant) {
+            \pm_Log::err(
+                "Not successfully executed: " . var_export($command, TRUE)
+            );
+
+            \pm_Log::err(
+                "stderr: " . $result['stderr']
+            );
+        }
+
+        return $result;
+    }
 }
