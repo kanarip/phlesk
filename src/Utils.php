@@ -82,4 +82,24 @@ class Utils
 
         return $result;
     }
+
+    public static function mkdirs(Array $directories, \pm_ServerFileManager $fm)
+    {
+        foreach ($directories as $d) {
+            if (!$fm->fileExists($d)) {
+                $fm->mkdir($d, '0750', true);
+            }
+        }
+    }
+
+    public static function renderTemplate($template, $target, $substitions, \pm_ServerFileManager $fm)
+    {
+        $tpl = $fm->fileGetContents($template);
+        $result = str_replace(
+            array_keys($substitions),
+            array_values($substitions),
+            $tpl
+        );
+        $fm->filePutContents($target, $result);
+    }
 }
