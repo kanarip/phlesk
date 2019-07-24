@@ -70,7 +70,7 @@ class Utils
         \pm_Log::debug("phlesk-execute: " . var_export($command, true));
 
         $result = \pm_ApiCli::callSbin(
-            "mattermost-execute",
+            "phlesk-execute",
             $command,
             \pm_ApiCli::RESULT_FULL
         );

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+debug=$(grep -Eq '^filter.priority\s+=\s+7' /usr/local/psa/admin/conf/panel.ini 2>/dev/null; echo $?)
+
+if [ ${debug} -eq 0 ]; then
+    set -x
+fi
+
+PATH=$PATH:$(dirname $0)
+export PATH
+
+exec "$@"
+
+exit 0
