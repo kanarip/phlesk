@@ -146,4 +146,38 @@ class Utils
 
         return true;
     }
+
+    /**
+        Switch to the $extension context.
+
+        @return String The name of the current module.
+     */
+    public static function contextIn($extension)
+    {
+        $module = \pm_Context::getModuleId();
+
+        if ($module != $extension) {
+            \pm_Context::reset();
+            \pm_Context::init($extension);
+            \pm_Log::debug("Switched context from {$module} to {$extension}");
+        }
+
+        return $module;
+    }
+
+    /**
+        Switch out of our context, back to the previous (if there was any).
+
+        @return Mixed $return
+     */
+    public static function contextOut($extension, $previous, $return)
+    {
+        if ($previous != $extension) {
+            \pm_Log::debug("Switching context from {$extension} to {$module}");
+            \pm_Context::reset();
+            \pm_Context::init($previous);
+        }
+
+        return $return;
+    }
 }
