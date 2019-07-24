@@ -102,4 +102,48 @@ class Utils
         );
         $fm->filePutContents($target, $result);
     }
+
+    /**
+     * Download the file into $target_directory
+     *
+     * This routine ensures the file appears atomically,
+     * by downloading to a temporary file in $target_directory and renaming at the end.
+     *
+     * @return TRUE if the tarball is available, FALSE if not
+     */
+    public static function downloadFile($url, $target_directory, $file_name, \pm_ServerFileManager $fm)
+    {
+        $target_dir = rtrim($target_directory, '/');
+
+        $tar_file = "{$target_dir}/{$file_name}";
+        $tmp_file = tempnam($target_dir, $file_name);
+
+        if ($fm->fileExists($tar_file)) {
+            return true;
+        }
+
+        \pm_Log::debug("Downloading {$tar_file}");
+
+        // Download to temp directory and then move, for it to appear atomic
+        $result = self::exec(["wget", "-O{$tmp_file}", "{$url}"], true);
+
+        // This could also fail because there is no connection to the internet, so not necessarily an error.
+        if ($result['code'] != 0) {
+            \pm_Log::info(
+                "Failed to download {$file_name}: '" . $result['stderr']
+            );
+
+            return false;
+        }
+
+        // We check again in case the file has been downloaded by someone else meanwhile
+        if (!$fm->fileExists($tar_file)) {
+            $result = self::exec(["mv", "{$tmp_file}", "{$tar_file}"]);
+            if ($result['code'] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
