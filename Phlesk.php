@@ -15,7 +15,8 @@
     @link      https://pxts.ch
  */
 
-namespace Phlesk;
+// Not needed, but linting. Right.
+//namespace Phlesk;
 
 /**
     Main class. Static utility functions mostly.
@@ -30,8 +31,10 @@ namespace Phlesk;
     @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
     @link      https://pxts.ch
  */
+// phpcs:disable
 class Phlesk
 {
+// phpcs:enable
 
     /**
         Switch the context from the current \pm_Context to the target context.
