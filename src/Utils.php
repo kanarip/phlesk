@@ -7,23 +7,6 @@ namespace Phlesk;
  */
 class Utils
 {
-    public static function getSubscriptionDomains(\pm_Domain $domain)
-    {
-        // No way up to the subscription, go through client
-        $client = $domain->getClient();
-        $homepath = $domain->getHomePath();
-
-        $subscription_domains = [];
-        $domains = \pm_Domain::getDomainsByClient($client);
-        foreach ($domains as $d) {
-            if ($d->getHomePath() == $homepath) {
-                $subscription_domains[] = $d;
-            }
-        }
-
-        return $subscription_domains;
-    }
-
     private static function isSubscriptionManagementAvailable()
     {
         // Determine the Plesk edition -- or rather whether subscription

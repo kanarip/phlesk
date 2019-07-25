@@ -1,2 +1,2 @@
 stylecheck:
-	phpcs ./
+	phpcs -v Phlesk.php Phlesk/

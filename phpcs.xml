@@ -3,9 +3,8 @@
 	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 	<description>A custom ruleset</description>
 
-	<rule ref="PSR2">
-		<!-- <exclude name="PEAR.Functions.FunctionCallSignature.Indent" /> -->
-	</rule>
+	<rule ref="PEAR"/>
+	<rule ref="PSR2"/>
 
 	<!-- Doc block alignments -->
 	<rule ref="Squiz.Commenting.DocCommentAlignment" />

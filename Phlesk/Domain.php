@@ -1,21 +1,44 @@
 <?php
 /**
     Extending \pm_Domain.
+
+    PHP Version 5
+
+    @category  PHP
+    @package   Phlesk
+    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
+    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
+    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
+    @link      https://pxts.ch
  */
 namespace Phlesk;
 
 /**
     Extending \pm_Domain
+
+    PHP Version 5
+
+    @category  PHP
+    @package   Phlesk
+    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
+    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
+    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
+    @link      https://pxts.ch
  */
 class Domain extends \pm_Domain
 {
 
     /**
         Retrieve a list of all domains.
+
         Do not use this function. Instead use \Phlesk::getAllDomains();
-        @param Boolean $main        Main domains only.
-        @param Boolean $hosting     Domains with hosting only.
-        @param Boolean $mail        Domains with mail service only.
+
+        @param Boolean $main    Main domains only.
+        @param Boolean $hosting Domains with hosting only.
+        @param Boolean $mail    Domains with mail service only.
+
         @return Array
      */
     public static function getAllDomains($main = false, $hosting = false, $mail = false)
@@ -27,10 +50,13 @@ class Domain extends \pm_Domain
 
     /**
         Override \pm_Domain::getByGuid().
+
         Do not use this function. Instead use \Phlesk::getDomainByGuid();
         Needed because \pm_Domain::getGuid() will happily log an error rather than simply
         return NULL.
-        @param String $domain_guid  The GUID.
+
+        @param String $domain_guid The GUID.
+
         @return \Phlesk\Domain|NULL
      */
     public static function getByGuid($domain_guid)
@@ -46,10 +72,13 @@ class Domain extends \pm_Domain
 
     /**
         Override \pm_Domain::getByDomainId().
+
         Do not use this function. Instead use \Phlesk::getDomainById();
         Needed because \pm_Domain::getByDomainId() will happily log an error rather than simply
         return NULL.
-        @param Integer $domain_id  The ID.
+
+        @param Integer $domain_id The ID.
+
         @return \Phlesk\Domain|NULL
      */
     public static function getByDomainId($domain_id)
@@ -65,8 +94,10 @@ class Domain extends \pm_Domain
 
     /**
         Determine if a domain actually has hosting.
+
         Needed because \pm_Domain::hasHosting() does not accurately reflect the then-current
         status.
+
         @return Boolean
      */
     public function hasHosting()
@@ -79,7 +110,9 @@ class Domain extends \pm_Domain
 
     /**
         Determine if a domain actually has mail service enabled.
+
         Needed because the function doesn't exist for \pm_Domain.
+
         @return Boolean
      */
     public function hasMailService()

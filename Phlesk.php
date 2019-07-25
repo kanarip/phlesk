@@ -1,30 +1,54 @@
 <?php
-
-namespace Phlesk;
-
 /**
     Welcome to Phlesk.
 
     Hope you enjoy ;-)
+
+    PHP Version 5
+
+    @category  PHP
+    @package   Phlesk
+    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
+    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
+    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
+    @link      https://pxts.ch
  */
+
+namespace Phlesk;
 
 /**
     Main class. Static utility functions mostly.
+
+    PHP Version 5
+
+    @category  PHP
+    @package   Phlesk
+    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
+    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
+    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
+    @link      https://pxts.ch
  */
 class Phlesk
 {
 
     /**
         Switch the context from the current \pm_Context to the target context.
+
         Note it only switches context if necessary.
+
         Use this to ensure extensions calling functions of one another do not incidentally
         operate in the incorrect context.
+
         Note: It should be considered the responsibility of the target extension to ensure the
         context in which it operates is the correct context, and at or near the end of the
         function, it is also responsible for switching the context back to the original.
-        @param String $target   The string representation of the target context, i.e. "kolab",
-                                "seafile", etc.
-        @return String  The name of the current context.
+
+        @param String $target The string representation of the target context, i.e. "kolab",
+                              "seafile", etc.
+
+        @return String The name of the current context.
      */
     public static function contextIn($target)
     {
@@ -36,6 +60,7 @@ class Phlesk
         Note it only switches context if necessary.
         Use in conjunction with \Phlesk::contextIn() which returns a string representing the
         original context:
+
         ```php
           function foo() {
               $module = \Phlesk::contextIn("mymodule");
@@ -43,7 +68,9 @@ class Phlesk
               \Phlesk::contextOut($module);
           }
         ```
+
         You may specify an intended return value, such that you can reduce the code footprint:
+
         ```php
           function foo() {
               $module = \Phlesk::contextIn("mymodule");
@@ -52,10 +79,12 @@ class Phlesk
               return \Phlesk::contextOut($module, $result);
           }
         ```
-        @param String $target   The string representation of the target context, hopefully the
-                                correct one to switch back to after your work is done.
-        @param Mixed $return    Return this value after switching contexts.
-        @return Mixed   Returns the value of $return.
+
+        @param String $target The string representation of the target context, hopefully the
+                              correct one to switch back to after your work is done.
+        @param Mixed  $return Return this value after switching contexts.
+
+        @return Mixed Returns the value of $return.
      */
     public static function contextOut($target, $return = null)
     {
@@ -64,6 +93,12 @@ class Phlesk
 
     /**
         Execute a command with error control.
+
+        @param String $command   The base command to execute.
+        @param Array  $arguments The parameters to the command to execute.
+        @param Bool   $tolerant  Whether or not the failure of execution is fatal (default).
+
+        @return Array Result of command execution, including 'code', 'stderr', 'stdout'.
      */
     public static function exec(
         String $command,
@@ -88,10 +123,12 @@ class Phlesk
 
     /**
         Obtain a list of domains.
-        @param Bool $main       Only return domains that are primary domains for a subscription.
-        @param Bool $hosting    Only return domains that have hosting enabled.
-        @param Bool $mail       Only return domains that have mail service enabled.
-        @return Array   Returns a list of \Phlesk\Domain objects.
+
+        @param Bool $main    Only return domains that are primary domains for a subscription.
+        @param Bool $hosting Only return domains that have hosting enabled.
+        @param Bool $mail    Only return domains that have mail service enabled.
+
+        @return Array Returns a list of \Phlesk\Domain objects.
      */
     public static function getAllDomains($main = false, $hosting = false, $mail = false)
     {
@@ -118,7 +155,9 @@ class Phlesk
 
     /**
         Get a \Phlesk\Domain using its GUID.
-        @param String $domain_guid  The GUID of the domain to find and return.
+
+        @param String $domain_guid The GUID of the domain to find and return.
+
         @return \Phlesk\Domain|NULL
      */
     public static function getDomainByGuid(String $domain_guid)
@@ -136,11 +175,14 @@ class Phlesk
 
     /**
         Get a \Phlesk\Domain by its numeric identifier.  Really, you could just use:
+
         ```php
            $domain = new \Phlesk\Domain($domain_id);
         ```
-        @param Int $domain_id
-        @return \Phlesk\Domain
+
+        @param Int $domain_id The ID of the domain to return.
+
+        @return \Phlesk\Domain|NULL
      */
     public static function getDomainById(Integer $domain_id)
     {
@@ -151,8 +193,10 @@ class Phlesk
 
     /**
         Get a \Phlesk\Domain by its name.
-        @param String $domain_name
-        @return \Phlesk\Domain
+
+        @param String $domain_name The name of the domain to return.
+
+        @return \Phlesk\Domain|NULL
      */
     public static function getDomainByName($domain_name)
     {
@@ -165,6 +209,11 @@ class Phlesk
 
     /**
         Get domains for a client.
+
+        @param \pm_Client $client   The pm_Client to return domains for.
+        @param Bool       $mainOnly Only return main domains, not sub-domains, nor aliases.
+
+        @return Array A list with \Phlesk\Domain items.
      */
     public static function getDomainsByClient(\pm_Client $client, $mainOnly = false)
     {
