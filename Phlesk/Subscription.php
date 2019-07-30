@@ -50,7 +50,7 @@ class Subscription
 
         foreach ($domains as $domain) {
             if ($domain->getHomePath() == $homepath) {
-                $subscription_domains[] = $domain;
+                $subscription_domains[] = new \Phlesk\Domain($domain->getId());
             }
         }
 
