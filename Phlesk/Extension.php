@@ -36,7 +36,7 @@ class Extension
 
         @return Bool|NULL
      */
-    public static function isActive($target)
+    public static function isActive(String $target)
     {
         if (class_exists('pm_Extension')) {
             try {
@@ -56,14 +56,46 @@ class Extension
 
         @return Bool
      */
-    public function isEnabled($target, \Phlesk\Domain $domain)
+    public function isEnabled(String $target, \Phlesk\Domain $domain)
     {
+        if (!self::isActive($target)) {
+            return false;
+        }
+
+        if (!self::isInstalled(\Phlesk\Context::getModuleId())) {
+            return false;
+        }
+
         $module = \Phlesk\Context::in($target);
+
+        if (!self::isInstalled($target)) {
+            return false;
+        }
 
         $extension = ucfirst(strtolower($target));
 
         $permission = (bool)$domain->hasPermission("manage_{$target}");
 
         return \Phlesk\Context::out($module, $permission);
+    }
+
+    /**
+        Verify the extension has installed its software.
+
+        @param String $target The name of the extension to check.
+
+        @return Bool
+     */
+    public static function isInstalled(String $target)
+    {
+        $extension = ucfirst(strtolower($target));
+
+        $extension_installed_func = "Modules_{$extension}_Install::isInstalled";
+
+        if (method_exists($extension_installed_func)) {
+            return $extension_installed_func();
+        }
+
+        return true;
     }
 }
