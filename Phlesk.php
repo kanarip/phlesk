@@ -14,21 +14,6 @@
     @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
     @link      https://pxts.ch
  */
-
-/**
-    Main class. Static utility functions mostly.
-
-    PHP Version 5
-
-    @category  PHP
-    @package   Phlesk
-    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
-    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
-    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
-    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
-    @link      https://pxts.ch
- */
-// Would state everything would need to be in a namespace, which isn't true.
 // phpcs:ignore
 class Phlesk
 {
@@ -58,6 +43,7 @@ class Phlesk
     /**
         Switch out of the current \pm_Context back to an original context.
         Note it only switches context if necessary.
+
         Use in conjunction with \Phlesk::contextIn() which returns a string representing the
         original context:
 
@@ -124,17 +110,44 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool $main    Only return domains that are primary domains for a subscription.
-        @param Bool $hosting Only return domains that have hosting enabled.
-        @param Bool $mail    Only return domains that have mail service enabled.
+        @param Bool $main        Only return domains that are primary domains for a subscription.
+        @param Bool $hosting     Only return domains that have hosting enabled.
+        @param Bool $mail        Only return domains that have mail service enabled.
+        @param Func $filter_func An optional function to apply as a filter.
 
         @return Array Returns a list of \Phlesk\Domain objects.
      */
-    public static function getAllDomains($main = false, $hosting = false, $mail = false)
-    {
+    public static function getAllDomains(
+        $main = false,
+        $hosting = false,
+        $mail = false,
+        $filter_func = null
+    ) {
+        $client = null;
         $domains = array();
+        $pm_domains = array();
 
-        $pm_domains = \pm_Domain::getAllDomains($main);
+        $session = \pm_Session::isExist();
+
+        if ($session) {
+            $client = \pm_Session::getClient();
+        }
+
+        if ($client == null) {
+            $pm_domains = \pm_Domain::getAllDomains($main);
+        } elseif ($client->isAdmin()) {
+            $pm_domains = \pm_Domain::getAllDomains($main);
+        } elseif ($client->isReseller()) {
+            $all_domains = \pm_Domain::getAllDomains($main);
+
+            foreach ($all_domains as $domain) {
+                if ($client->hasAccessToDomain($domain->getId())) {
+                    $pm_domains[] = $domain;
+                }
+            }
+        } else {
+            $pm_domains = \Phlesk::getDomainsByClient($client);
+        }
 
         foreach ($pm_domains as $pm_domain) {
             $domain = new \Phlesk\Domain($pm_domain->getId());
@@ -148,6 +161,10 @@ class Phlesk
             }
 
             $domains[] = $domain;
+        }
+
+        if ($filter_func && method_exists($filter_func)) {
+            return call_user_func_array($filter_func, $domains);
         }
 
         return $domains;
@@ -208,6 +225,19 @@ class Phlesk
     }
 
     /**
+        Get a name for a \Phlesk\Domain by its ID.
+
+        @param Int $domain_id The ID for the domain to obtain the name for.
+
+        @return String
+     */
+    public static function getDomainNameByID(Int $domain_id)
+    {
+        $domain = \Phlesk::getDomainById($domain_id);
+        return $domain->getName();
+    }
+
+    /**
         Get domains for a client.
 
         @param \pm_Client $client   The pm_Client to return domains for.
@@ -217,6 +247,14 @@ class Phlesk
      */
     public static function getDomainsByClient(\pm_Client $client, $mainOnly = false)
     {
-        return \pm_Domain::getDomainsByClient($client, $mainOnly);
+        $domains = array();
+
+        $pm_domains = \pm_Domain::getDomainsByClient($client, $mainOnly);
+
+        foreach ($pm_domains as $pm_domain) {
+            $domains[] = new \Phlesk\Domain($pm_domain->getId());
+        }
+
+        return $domains;
     }
 }
