@@ -29,6 +29,90 @@ namespace Phlesk;
  */
 class Domain extends \pm_Domain
 {
+    /**
+        Disable the integration between the current context and the target module.
+
+        Ergo, if this is called from the 'kolab' module, and it wishes to no longer integrate with
+        the 'seafile' module;
+
+        ```php
+          $result = $domain->disableIntegration('seafile');
+        ```
+
+        @param String $target The module to disable integration with.
+
+        @return Boolean
+     */
+    public function disableIntegration(String $target)
+    {
+        $module = \pm_Context::getModuleId();
+
+        if ($target == $module) {
+            \pm_Log::err("Can not disable integration with self.");
+            return false;
+        }
+
+        $extension = ucfirst(strtolower($target));
+
+        $disable_class = "Modules_{$extension}_Domain";
+        $disable_function = "disable{$extension}Integration";
+
+        if (!class_exists($disable_class)) {
+            \pm_Log::err("Can not disable {$extension}: No class {$disable_class}");
+            return false;
+        }
+
+        if (!method_exists($disable_class, $disable_method)) {
+            \pm_Log::err(
+                "Can not disable {$extension}: No method {$disable_class}::{$disable_function}"
+            );
+
+            return false;
+        }
+
+        $result = call_user_func_array("{$disable_class}::{$disable_function}", [$this]);
+
+        return \Phlesk\Context::out($module, $result);
+    }
+
+    /**
+        Enable the integration between the current context and the target module.
+
+        @param String $target The module to enable integration with.
+
+        @return Boolean
+     */
+    public function enableIntegration($target)
+    {
+        $module = \pm_Context::getModuleId();
+
+        if ($target == $module) {
+            \pm_Log::err("Can not enable integration with self.");
+            return false;
+        }
+
+        $extension = ucfirst(strtolower($target));
+
+        $enable_class = "Modules_{$extension}_Domain";
+        $enable_function = "enable{$extension}Integration";
+
+        if (!class_exists($enable_class)) {
+            \pm_Log::err("Can not enable {$extension}: No class {$enable_class}");
+            return false;
+        }
+
+        if (!method_exists($enable_class, $enable_method)) {
+            \pm_Log::err(
+                "Can not enable {$extension}: No method {$enable_class}::{$enable_function}"
+            );
+
+            return false;
+        }
+
+        $result = call_user_func_array("{$enable_class}::{$enable_function}", [$this]);
+
+        return \Phlesk\Context::out($module, $result);
+    }
 
     /**
         Retrieve a list of all domains.
