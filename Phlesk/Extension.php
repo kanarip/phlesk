@@ -56,7 +56,7 @@ class Extension
 
         @return Bool
      */
-    public function isEnabled(String $target, \Phlesk\Domain $domain)
+    public static function isEnabled(String $target, \Phlesk\Domain $domain)
     {
         if (!self::isActive($target)) {
             return false;
