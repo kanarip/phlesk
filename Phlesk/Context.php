@@ -44,12 +44,12 @@ class Context extends \pm_Context
         $source = self::getModuleId();
 
         if ($source != $target) {
-                self::reset();
-                self::init($target);
-                \pm_Log::debug("Switched context from {$source} to {$target}");
+            self::reset();
+            self::init($target);
+            \pm_Log::debug("Switched context from {$source} to {$target}");
         }
 
-            return $source;
+        return $source;
     }
 
     /**
