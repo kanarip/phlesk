@@ -15,9 +15,6 @@
     @link      https://pxts.ch
  */
 
-// Not needed, but linting. Right.
-//namespace Phlesk;
-
 /**
     Main class. Static utility functions mostly.
 
@@ -31,10 +28,10 @@
     @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
     @link      https://pxts.ch
  */
-// phpcs:disable
+// Would state everything would need to be in a namespace, which isn't true.
+// phpcs:ignore
 class Phlesk
 {
-// phpcs:enable
 
     /**
         Switch the context from the current \pm_Context to the target context.
@@ -187,7 +184,7 @@ class Phlesk
 
         @return \Phlesk\Domain|NULL
      */
-    public static function getDomainById(Integer $domain_id)
+    public static function getDomainById(Int $domain_id)
     {
         $domain = new \Phlesk\Domain($domain_id);
 
