@@ -17,6 +17,7 @@
 // phpcs:ignore
 class Phlesk
 {
+    public const VERSION = '0.1';
 
     /**
         Switch the context from the current \pm_Context to the target context.
@@ -80,28 +81,26 @@ class Phlesk
     /**
         Execute a command with error control.
 
-        @param String $command   The base command to execute.
-        @param Array  $arguments The parameters to the command to execute.
-        @param Bool   $tolerant  Whether or not the failure of execution is fatal (default).
+        @param Array            $command  The command and arguments to execute.
+        @param Bool             $tolerant Whether or not the failure of execution is fatal
+                                          (default).
+        @param pm_LongTask_Task $task     The long-running task that is being executed, if any.
 
         @return Array Result of command execution, including 'code', 'stderr', 'stdout'.
      */
     public static function exec(
-        String $command,
-        Array $arguments = [],
-        Bool $tolerant = false
+        Array $command,
+        Bool $tolerant = false,
+        pm_LongTask_Task $task = null
     ) {
 
-        $result = \pm_ApiCli::callSbin($command, $arguments, \pm_ApiCli::RESULT_FULL);
+        $module = \Phlesk\Context::getModuleId();
+
+        $result = \pm_ApiCli::callSbin("{$module}-execute", $command, \pm_ApiCli::RESULT_FULL);
 
         if ($result['code'] != 0 && !$tolerant) {
-            pm_Log::err(
-                "Error executing: '" . $command . " " . implode(' ', $arguments) . "'"
-            );
-
-            pm_Log::err(
-                "stderr: " . $result['stderr']
-            );
+            \pm_Log::err("Error executing: ;" . implode(' ', $command) . "'");
+            \pm_Log::err("stderr: " . $result['stderr']);
         }
 
         return $result;

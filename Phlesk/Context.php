@@ -41,11 +41,14 @@ class Context extends \pm_Context
      */
     public static function in($target)
     {
-        $source = self::getModuleId();
+        $source = \pm_Context::getModuleId();
 
         if ($source != $target) {
-            self::reset();
-            self::init($target);
+            \pm_Log::debug("Switching context from {$source} to {$target}");
+            //\pm_Log::debug("Resetting context {$source}");
+            //\pm_Context::reset();
+            \pm_Log::debug("Initializing context {$target}");
+            \pm_Context::init($target);
             \pm_Log::debug("Switched context from {$source} to {$target}");
         }
 
@@ -66,8 +69,11 @@ class Context extends \pm_Context
 
         if ($source != $target) {
             \pm_Log::debug("Switching context from {$source} to {$target}");
-            self::reset();
-            self::init($target);
+            //\pm_Log::debug("Resetting context {$source}");
+            //\pm_Context::reset();
+            \pm_Log::debug("Initializing context {$target}");
+            \pm_Context::init($target);
+            \pm_Log::debug("Switched context from {$source} to {$target}");
         }
 
         return $return;

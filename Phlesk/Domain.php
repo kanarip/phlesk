@@ -32,86 +32,27 @@ class Domain extends \pm_Domain
     /**
         Disable the integration between the current context and the target module.
 
-        Ergo, if this is called from the 'kolab' module, and it wishes to no longer integrate with
-        the 'seafile' module;
-
-        ```php
-          $result = $domain->disableIntegration('seafile');
-        ```
-
-        @param String $target The module to disable integration with.
-
-        @return Boolean
+        @return NULL
      */
-    public function disableIntegration(String $target)
+    public function disableIntegration()
     {
-        $module = \pm_Context::getModuleId();
+        $source = \Phlesk\Context::getModuleId();
 
-        if ($target == $module) {
-            \pm_Log::err("Can not disable integration with self.");
-            return false;
-        }
-
-        $extension = ucfirst(strtolower($target));
-
-        $disable_class = "Modules_{$extension}_Domain";
-        $disable_function = "disable{$extension}Integration";
-
-        if (!class_exists($disable_class)) {
-            \pm_Log::err("Can not disable {$extension}: No class {$disable_class}");
-            return false;
-        }
-
-        if (!method_exists($disable_class, $disable_method)) {
-            \pm_Log::err(
-                "Can not disable {$extension}: No method {$disable_class}::{$disable_function}"
-            );
-
-            return false;
-        }
-
-        $result = call_user_func_array("{$disable_class}::{$disable_function}", [$this]);
-
-        return \Phlesk\Context::out($module, $result);
+        \pm_Log::debug("Triggering event 'disable_domain'");
+        \pm_ActionLog::submit('disable_domain', $this->getId(), [$source], []);
     }
 
     /**
         Enable the integration between the current context and the target module.
 
-        @param String $target The module to enable integration with.
-
-        @return Boolean
+        @return NULL
      */
-    public function enableIntegration($target)
+    public function enableIntegration()
     {
-        $module = \pm_Context::getModuleId();
+        $source = \Phlesk\Context::getModuleId();
 
-        if ($target == $module) {
-            \pm_Log::err("Can not enable integration with self.");
-            return false;
-        }
-
-        $extension = ucfirst(strtolower($target));
-
-        $enable_class = "Modules_{$extension}_Domain";
-        $enable_function = "enable{$extension}Integration";
-
-        if (!class_exists($enable_class)) {
-            \pm_Log::err("Can not enable {$extension}: No class {$enable_class}");
-            return false;
-        }
-
-        if (!method_exists($enable_class, $enable_method)) {
-            \pm_Log::err(
-                "Can not enable {$extension}: No method {$enable_class}::{$enable_function}"
-            );
-
-            return false;
-        }
-
-        $result = call_user_func_array("{$enable_class}::{$enable_function}", [$this]);
-
-        return \Phlesk\Context::out($module, $result);
+        \pm_Log::debug("Triggering event 'enable_domain'");
+        \pm_ActionLog::submit('enable_domain', $this->getId(), [], [$source]);
     }
 
     /**
@@ -136,6 +77,7 @@ class Domain extends \pm_Domain
         Override \pm_Domain::getByGuid().
 
         Do not use this function. Instead use \Phlesk::getDomainByGuid();
+
         Needed because \pm_Domain::getGuid() will happily log an error rather than simply
         return NULL.
 

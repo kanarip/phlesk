@@ -42,10 +42,12 @@ class Extension
             try {
                 $extension = \pm_Extension::getById(strtolower($target));
                 return $extension->isActive();
-            } catch (Exception $e) {
+            } catch (\pm_Exception $e) {
                 return false;
             }
         }
+
+        return true;
     }
 
     /**
@@ -92,7 +94,7 @@ class Extension
 
         $extension_installed_func = "Modules_{$extension}_Install::isInstalled";
 
-        if (method_exists($extension_installed_func)) {
+        if (method_exists("Modules_{$extension}_Install", "isInstalled")) {
             return $extension_installed_func();
         }
 
