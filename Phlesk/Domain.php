@@ -112,7 +112,7 @@ class Domain extends \pm_Domain
         \pm_Log::warn("Use Phlesk::getDomainById()");
 
         if ((Integer)$domain_id !== $domain_id) {
-            \pm_Log::warn('\Phlesk\Domain parameter \$domain_id should be an Integer.');
+            \pm_Log::warn('\Phlesk\Domain parameter $domain_id should be an Integer.');
         }
 
         return \Phlesk::getDomainById((Integer)$domain_id);
@@ -128,9 +128,29 @@ class Domain extends \pm_Domain
      */
     public function hasHosting()
     {
-        \pm_Log::debug("Phlesk_Domain->hasHosting() for {$this->getName()} in " . __FILE__);
+        $hasHosting = parent::hasHosting();
 
-        return parent::hasHosting();
+        // If hosting still exists, no need to dig any further.
+        if ($hasHosting) {
+            return $hasHosting;
+        }
+
+        // \pm_Domain::getByGuid would log an error if the domain no longer exists.
+        $domain = \Phlesk::getDomainByGuid($this->getGuid());
+
+        if (!$domain) {
+            // The domain has already disappeared
+            return $hasHosting;
+        } else {
+            // Avoid recursiveness
+            $domain = \pm_Domain::getByGuid($this->getGuid());
+        }
+
+        if ($hasHosting != $domain->hasHosting()) {
+            \pm_Log::debug("\Phlesk\Domain->hasHosting(): Good thing you're here.");
+        }
+
+        return $domain->hasHosting();
     }
 
 
@@ -143,7 +163,6 @@ class Domain extends \pm_Domain
      */
     public function hasMailService()
     {
-        \pm_Log::err("Not yet implemented: Phlesk\Domain->hasMailService()");
         return true;
     }
 }

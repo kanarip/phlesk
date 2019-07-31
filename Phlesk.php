@@ -109,10 +109,10 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool $main        Only return domains that are primary domains for a subscription.
-        @param Bool $hosting     Only return domains that have hosting enabled.
-        @param Bool $mail        Only return domains that have mail service enabled.
-        @param Func $filter_func An optional function to apply as a filter.
+        @param Bool $main           Only return domains that are primary domains for a subscription.
+        @param Bool $hosting        Only return domains that have hosting enabled.
+        @param Bool $mail           Only return domains that have mail service enabled.
+        @param Func $filter_methods An optional function to apply as a filter.
 
         @return Array Returns a list of \Phlesk\Domain objects.
      */
@@ -120,11 +120,16 @@ class Phlesk
         $main = false,
         $hosting = false,
         $mail = false,
-        $filter_func = null
+        $filter_methods = []
     ) {
         $client = null;
-        $domains = array();
-        $pm_domains = array();
+        $domains = [];
+        $pm_domains = [];
+
+        $module = \Phlesk\Context::getModuleId();
+        $extension = ucfirst(strtolower($module));
+
+        $filter_class = "Modules_{$extension}_Utils";
 
         $session = \pm_Session::isExist();
 
@@ -159,11 +164,25 @@ class Phlesk
                 continue;
             }
 
-            $domains[] = $domain;
-        }
+            $skip = false;
 
-        if ($filter_func && method_exists($filter_func)) {
-            return call_user_func_array($filter_func, $domains);
+            if ($filter_methods) {
+                foreach ($filter_methods as $filter_method) {
+                    if (method_exists($filter_class, $filter_method)) {
+                        $method = "{$filter_class}::{$filter_method}";
+
+                        if ($result = call_user_func_array($method, [$domain])) {
+                            $skip = true;
+                        }
+                    }
+                }
+            }
+
+            if ($skip) {
+                continue;
+            }
+
+            $domains[] = $domain;
         }
 
         return $domains;
@@ -178,7 +197,8 @@ class Phlesk
      */
     public static function getDomainByGuid(String $domain_guid)
     {
-        $domains = \Phlesk::getAllDomains();
+        // Must use \pm_Domain to avoid loops
+        $domains = \pm_Domain::getAllDomains();
 
         foreach ($domains as $domain) {
             if ($domain->getGuid() == $domain_guid) {
@@ -202,9 +222,16 @@ class Phlesk
      */
     public static function getDomainById(Int $domain_id)
     {
-        $domain = new \Phlesk\Domain($domain_id);
+        // Must use \pm_Domain to avoid loops
+        $domains = \pm_Domain::getAllDomains();
 
-        return $domain;
+        foreach ($domains as $domain) {
+            if ($domain->getId() == $domain_id) {
+                return new \Phlesk\Domain($domain_id);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -214,13 +241,18 @@ class Phlesk
 
         @return \Phlesk\Domain|NULL
      */
-    public static function getDomainByName($domain_name)
+    public static function getDomainByName(String $domain_name)
     {
-        $pm_domain = \pm_Domain::getByName($domain_name);
+        // Must use \pm_Domain to avoid loops
+        $domains = \pm_Domain::getAllDomains();
 
-        $domain = new \Phlesk\Domain($pm_domain->getId());
+        foreach ($domains as $domain) {
+            if ($domain->getName() == $domain_name) {
+                return new \Phlesk\Domain($domain->getId());
+            }
+        }
 
-        return $domain;
+        return null;
     }
 
     /**
@@ -255,5 +287,47 @@ class Phlesk
         }
 
         return $domains;
+    }
+
+    /**
+        Get the primary domain for any domain.
+
+        Basically, maybe, the primary subscription domain. Terminology is confusing.
+
+        @param String $domain_guid The GUID for the domain to retain the primary domain for.
+
+        @return \Phlesk\Domain|NULL
+     */
+    public static function getPrimaryDomain(String $domain_guid)
+    {
+        $domains = \Phlesk::getAllDomains(true);
+
+        foreach ($domains as $domain) {
+            if ($domain->getGuid() == $domain_guid) {
+                return $domain;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+        Confirm or deny the domain in question is the primary domain.
+
+        @param String $domain_guid The GUID for the domain to confirm/deny its primacy of.
+
+        @return Bool
+     */
+    public static function isPrimaryDomain(String $domain_guid)
+    {
+        $domains = \Phlesk::getAllDomains(true);
+
+        foreach ($domains as $domain) {
+            if ($domain->getGuid() == $domain_guid) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
