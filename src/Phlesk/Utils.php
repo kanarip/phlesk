@@ -68,21 +68,40 @@ class Utils
     }
 
     /**
-        Initialize the default permissions for an extension.
+        Return the default permissions for an extension.
 
-        @return NULL
+        @return Bool
      */
-    public static function initDefaultPermission()
+    public static function defaultPermission()
     {
         if (!self::_canManagePlans()) {
+            // If we can't manage plans, the permission is always true.
             \pm_Settings::set('permission-default', 1);
+            return true;
         } else {
-            $domains = \Phlesk::getAllDomains(true);
+            $permissionConfig = \pm_Settings::get('permission-default', null);
+
+            $domains = \Phlesk::getAllDomains(
+                $main = true,
+                $hosting = true,
+                $mail = true,
+                $filter_methods = ["filterIsDomainActive"]
+            );
 
             if (count($domains) == 0) {
-                \pm_Settings::set('permission-default', 1);
+                if ($permissionConfig === null) {
+                    \pm_Settings::set('permission-default', 1);
+                    return true;
+                } else {
+                    return (bool)$permissionConfig;
+                }
             } else {
-                \pm_Settings::set('permission-default', 0);
+                if ($permissionConfig === null) {
+                    \pm_Settings::set('permission-default', 0);
+                    return false;
+                }
+
+                return (bool)$permissionConfig;
             }
         }
     }

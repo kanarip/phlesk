@@ -172,7 +172,10 @@ class Phlesk
                     if (method_exists($filter_class, $filter_method)) {
                         $method = "{$filter_class}::{$filter_method}";
 
-                        if ($result = call_user_func_array($method, [$domain])) {
+                        $result = call_user_func_array($method, [$domain]);
+
+                        if (!$result) {
+                            \pm_Log::debug("result: " . var_export($result, true));
                             $skip = true;
                         }
                     }
@@ -180,6 +183,7 @@ class Phlesk
             }
 
             if ($skip) {
+                \pm_Log::debug("skipping {$domain->getName()}");
                 continue;
             }
 

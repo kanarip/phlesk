@@ -163,6 +163,43 @@ class Domain extends \pm_Domain
      */
     public function hasMailService()
     {
+        $rpc = new \Phlesk\RPC();
+        $result = $rpc->requestMailServiceForDomain($this->getId());
         return true;
+    }
+
+    /**
+        List the user accounts for this domain.
+
+        @param Bool $decrypt Decrypt the password.
+
+        @return Array
+     */
+    public function listUsers($decrypt = false)
+    {
+        $users = [];
+
+        $db = \pm_Bootstrap::getDbAdapter();
+
+        $query = "
+            SELECT
+                CONCAT(m.mail_name, '@', d.name) AS email,
+                a.password AS password
+            FROM mail m
+                INNER JOIN accounts a ON m.account_id = a.id
+                INNER JOIN domains d ON m.dom_id = d.id
+            WHERE d.id = {$this->getId()}
+        ";
+
+        $result = $db->query($query);
+
+        while ($row = $result->fetch()) {
+            $users[] = array(
+                'email' => $row['email'],
+                'password' => ($decrypt ? \pm_Crypt::decrypt($row['password']) : $row['password'])
+            );
+        }
+
+        return $users;
     }
 }
