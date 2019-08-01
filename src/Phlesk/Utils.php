@@ -6,6 +6,45 @@ namespace Phlesk;
 class Utils
 {
     /**
+        Return the default permissions for an extension.
+
+        @return Bool
+     */
+    public static function defaultPermission()
+    {
+        if (!self::_canManagePlans()) {
+            // If we can't manage plans, the permission is always true.
+            \pm_Settings::set('permission-default', 1);
+            return true;
+        } else {
+            $permissionConfig = \pm_Settings::get('permission-default', null);
+
+            $domains = \Phlesk::getAllDomains(
+                $main = true,
+                $hosting = true,
+                $mail = true,
+                $filter_methods = ["filterIsDomainActive"]
+            );
+
+            if (count($domains) == 0) {
+                if ($permissionConfig === null) {
+                    \pm_Settings::set('permission-default', 1);
+                    return true;
+                } else {
+                    return (bool)$permissionConfig;
+                }
+            } else {
+                if ($permissionConfig === null) {
+                    \pm_Settings::set('permission-default', 0);
+                    return false;
+                }
+
+                return (bool)$permissionConfig;
+            }
+        }
+    }
+
+    /**
         Download the extension's application release file from the interwebz.
 
         @return Bool
@@ -68,42 +107,32 @@ class Utils
     }
 
     /**
-        Return the default permissions for an extension.
+        Render the contents of a file from a template.
 
-        @return Bool
+        @param String                $tpl    Template file to use, obtained from extension's var
+                                             directory.
+        @param Array                 $substs Substitution values.
+        @param \pm_ServerFileManager $fm     A file manager, if any
+
+        @return String
      */
-    public static function defaultPermission()
+    public static function renderTemplate(String $tpl, Array $substs, $fm = null)
     {
-        if (!self::_canManagePlans()) {
-            // If we can't manage plans, the permission is always true.
-            \pm_Settings::set('permission-default', 1);
-            return true;
-        } else {
-            $permissionConfig = \pm_Settings::get('permission-default', null);
+        $varDir = rtrim(\pm_Context::getVarDir(), '/');
 
-            $domains = \Phlesk::getAllDomains(
-                $main = true,
-                $hosting = true,
-                $mail = true,
-                $filter_methods = ["filterIsDomainActive"]
-            );
-
-            if (count($domains) == 0) {
-                if ($permissionConfig === null) {
-                    \pm_Settings::set('permission-default', 1);
-                    return true;
-                } else {
-                    return (bool)$permissionConfig;
-                }
-            } else {
-                if ($permissionConfig === null) {
-                    \pm_Settings::set('permission-default', 0);
-                    return false;
-                }
-
-                return (bool)$permissionConfig;
-            }
+        if (!$fm) {
+            $fm = new \pm_ServerFileManager();
         }
+
+        if (!$fm->fileExists($varDir . '/' . $tpl)) {
+            return "";
+        }
+
+        return str_replace(
+            array_keys($substs),
+            array_values($substs),
+            $fm->fileGetContents($varDir . '/' . $tpl)
+        );
     }
 
     /**
