@@ -8,8 +8,8 @@
     ],
     "autoload": {
         "classmap": [
-            "Phlesk",
-            "Phlesk.php"
+            "src/Phlesk.php",
+            "src/Phlesk/"
         ]
     },
     "require-dev": {

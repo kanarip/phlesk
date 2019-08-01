@@ -109,7 +109,8 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool  $main           Only return domains that are primary domains for a subscription.
+        @param Bool  $main           Only return domains that are primary domains for a
+                                     subscription.
         @param Bool  $hosting        Only return domains that have hosting enabled.
         @param Bool  $mail           Only return domains that have mail service enabled.
         @param Array $filter_methods An optional function to apply as a filter.
