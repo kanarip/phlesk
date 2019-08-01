@@ -109,10 +109,10 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool $main           Only return domains that are primary domains for a subscription.
-        @param Bool $hosting        Only return domains that have hosting enabled.
-        @param Bool $mail           Only return domains that have mail service enabled.
-        @param Func $filter_methods An optional function to apply as a filter.
+        @param Bool  $main           Only return domains that are primary domains for a subscription.
+        @param Bool  $hosting        Only return domains that have hosting enabled.
+        @param Bool  $mail           Only return domains that have mail service enabled.
+        @param Array $filter_methods An optional function to apply as a filter.
 
         @return Array Returns a list of \Phlesk\Domain objects.
      */
@@ -150,7 +150,7 @@ class Phlesk
                 }
             }
         } else {
-            $pm_domains = \Phlesk::getDomainsByClient($client);
+            $pm_domains = \Phlesk::getDomainsByClient($client, $main);
         }
 
         foreach ($pm_domains as $pm_domain) {
