@@ -16,7 +16,7 @@ namespace Phlesk;
 
 class RPC
 {
-    protected $_rpc;
+    private $_rpc;
 
     public function __construct()
     {
