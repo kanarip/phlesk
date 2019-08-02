@@ -53,37 +53,37 @@ class Utils
     {
         self::_waitForCompleteInstallation();
 
-        $base_url = "https://mirror.kolabenterprise.com/pub/releases/";
+        $baseUrl = "https://mirror.kolabenterprise.com/pub/releases/";
 
         $module = \Phlesk\Context::getModuleId();
         $extension = ucfirst(strtolower($module));
 
-        $version_class = "Modules_{$extension}_Version";
+        $versionClass = "Modules_{$extension}_Version";
 
-        if (!class_exists($version_class)) {
+        if (!class_exists($versionClass)) {
             \pm_Log::err("No version class exists for {$extension}");
             return false;
         }
 
-        $filename = $version_class::getFilename();
+        $filename = $versionClass::getFilename();
 
-        $url = $base_url . $filename;
+        $url = $baseUrl . $filename;
 
-        $var_dir = rtrim(\Phlesk\Context::getVarDir(), '/');
+        $varDir = rtrim(\Phlesk\Context::getVarDir(), '/');
 
-        $target_file = "{$var_dir}/{$filename}";
-        $temp_file = tempnam($var_dir, $filename);
+        $targetFile = "{$varDir}/{$filename}";
+        $tempFile = tempnam($varDir, $filename);
 
         $fm = new \pm_ServerFileManager();
 
-        if ($fm->fileExists($target_file)) {
+        if ($fm->fileExists($targetFile)) {
             return true;
         }
 
         $result = \Phlesk::exec(
             [
                 "wget",
-                "-O{$temp_file}",
+                "-O{$tempFile}",
                 $url
             ],
             true
@@ -94,8 +94,8 @@ class Utils
             return false;
         }
 
-        if (!$fm->fileExists($target_file)) {
-            $result = \Phlesk::exec(["mv", $temp_file, $target_file]);
+        if (!$fm->fileExists($targetFile)) {
+            $result = \Phlesk::exec(["mv", $tempFile, $targetFile]);
 
             if ($result['code'] != 0) {
                 \pm_Log::err("Failed to download {$url}: {$result['stderr']}");
