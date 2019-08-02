@@ -30,7 +30,7 @@
  */
 class Phlesk
 {
-    //public const VERSION = '0.1';
+    public const VERSION = '0.1';
 
     /**
         Switch the context from the current \pm_Context to the target context.
