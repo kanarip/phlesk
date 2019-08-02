@@ -23,7 +23,7 @@ class Utils
                 $main = true,
                 $hosting = true,
                 $mail = true,
-                $filter_methods = ["filterIsDomainActive"]
+                $filterMethods = ["filterIsDomainActive"]
             );
 
             if (count($domains) == 0) {

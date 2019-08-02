@@ -122,11 +122,11 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool  $main           Only return domains that are primary domains for a
-                                     subscription.
-        @param Bool  $hosting        Only return domains that have hosting enabled.
-        @param Bool  $mail           Only return domains that have mail service enabled.
-        @param Array $filter_methods An optional function to apply as a filter.
+        @param Bool  $main          Only return domains that are primary domains for a
+                                    subscription.
+        @param Bool  $hosting       Only return domains that have hosting enabled.
+        @param Bool  $mail          Only return domains that have mail service enabled.
+        @param Array $filterMethods An optional function to apply as a filter.
 
         @return Array Returns a list of \Phlesk\Domain objects.
      */
@@ -134,7 +134,7 @@ class Phlesk
         $main = false,
         $hosting = false,
         $mail = false,
-        $filter_methods = []
+        $filterMethods = []
     ) {
         $client = null;
         $domains = [];
@@ -143,7 +143,7 @@ class Phlesk
         $module = \Phlesk\Context::getModuleId();
         $extension = ucfirst(strtolower($module));
 
-        $filter_class = "Modules_{$extension}_Utils";
+        $filterClass = "Modules_{$extension}_Utils";
 
         $session = \pm_Session::isExist();
 
@@ -180,10 +180,10 @@ class Phlesk
 
             $skip = false;
 
-            if ($filter_methods) {
-                foreach ($filter_methods as $filter_method) {
-                    if (method_exists($filter_class, $filter_method)) {
-                        $method = "{$filter_class}::{$filter_method}";
+            if ($filterMethods) {
+                foreach ($filterMethods as $filterMethod) {
+                    if (method_exists($filterClass, $filterMethod)) {
+                        $method = "{$filterClass}::{$filterMethod}";
 
                         $result = call_user_func_array($method, [$domain]);
 
