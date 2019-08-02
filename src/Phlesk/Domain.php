@@ -122,16 +122,17 @@ class Domain extends \pm_Domain
     /**
         Get all domains for a client.
 
-        @param \pm_Client $client      The client.
-        @param Bool       $primaryOnly Whether or not to return only primary subscription domains.
+        @param \pm_Client $client          The client.
+        @param Bool       $mainDomainsOnly Whether or not to return only primary subscription
+                                           domains.
 
         @return Array
      */
-    public static function getDomainsByClient(\pm_Client $client, Bool $primaryOnly = false)
+    public static function getDomainsByClient(\pm_Client $client, $mainDomainsOnly = false)
     {
         \pm_Log::warn("Use Phlesk::getDomainsByClient()");
 
-        return \Phlesk::getDomainsByClient($client, $primaryOnly);
+        return \Phlesk::getDomainsByClient($client, $mainDomainsOnly);
     }
 
     /**
