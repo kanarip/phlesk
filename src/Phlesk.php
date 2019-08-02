@@ -14,10 +14,23 @@
     @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
     @link      https://pxts.ch
  */
-// phpcs:ignore
+
+/**
+    Class documentation.
+
+    PHP Version 5
+
+    @category  PHP
+    @package   Phlesk
+    @author    Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+    @author    Christian Mollekopf (Kolab Systems) <mollekopf@kolabsys.com>
+    @copyright 2019 Kolab Systems AG <contact@kolabsystems.com>
+    @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
+    @link      https://pxts.ch
+ */
 class Phlesk
 {
-    public const VERSION = '0.1';
+    //public const VERSION = '0.1';
 
     /**
         Switch the context from the current \pm_Context to the target context.
