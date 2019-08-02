@@ -100,6 +100,7 @@ class Domain extends \pm_Domain
         Override \pm_Domain::getByDomainId().
 
         Do not use this function. Instead use \Phlesk::getDomainById();
+
         Needed because \pm_Domain::getByDomainId() will happily log an error rather than simply
         return NULL.
 
@@ -116,6 +117,21 @@ class Domain extends \pm_Domain
         }
 
         return \Phlesk::getDomainById((Integer)$domain_id);
+    }
+
+    /**
+        Get all domains for a client.
+
+        @param \pm_Client $client      The client.
+        @param Bool       $primaryOnly Whether or not to return only primary subscription domains.
+
+        @return Array
+     */
+    public static function getDomainsByClient(\pm_Client $client, Bool $primaryOnly = false)
+    {
+        \pm_Log::warn("Use Phlesk::getDomainsByClient()");
+
+        return \Phlesk::getDomainsByClient($client, $primaryOnly);
     }
 
     /**
