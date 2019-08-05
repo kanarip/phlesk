@@ -128,7 +128,7 @@ class Domain extends \pm_Domain
 
         @return Array
      */
-    public static function getDomainsByClient($client, $mainDomainsOnly = false)
+    public static function getDomainsByClient(\pm_Client $client, $mainDomainsOnly = false)
     {
         \pm_Log::warn("Use Phlesk::getDomainsByClient()");
 
