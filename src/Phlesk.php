@@ -103,7 +103,7 @@ class Phlesk
      */
     public static function exec(
         Array $command,
-        Bool $tolerant = false,
+        $tolerant = false,
         pm_LongTask_Task $task = null
     ) {
 
