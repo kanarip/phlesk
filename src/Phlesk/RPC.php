@@ -23,7 +23,7 @@ class RPC
         $this->_rpc = \pm_ApiRpc::getService();
     }
 
-    public function requestMailServiceForDomain(Int $domainID)
+    public function requestMailServiceForDomain($domainID)
     {
         $prefs = $this->_siteMailPrefs($domainID);
 
