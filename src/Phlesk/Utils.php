@@ -116,7 +116,7 @@ class Utils
 
         @return String
      */
-    public static function renderTemplate(String $tpl, Array $substs, $fm = null)
+    public static function renderTemplate($tpl, Array $substs, $fm = null)
     {
         $varDir = rtrim(\pm_Context::getVarDir(), '/');
 

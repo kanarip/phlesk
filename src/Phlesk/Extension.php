@@ -36,7 +36,7 @@ class Extension
 
         @return Bool|NULL
      */
-    public static function isActive(String $target)
+    public static function isActive($target)
     {
         if (class_exists('pm_Extension')) {
             try {
@@ -58,7 +58,7 @@ class Extension
 
         @return Bool
      */
-    public static function isEnabled(String $target, \Phlesk\Domain $domain)
+    public static function isEnabled($target, \Phlesk\Domain $domain)
     {
         if (!self::isActive($target)) {
             return false;
@@ -88,7 +88,7 @@ class Extension
 
         @return Bool
      */
-    public static function isInstalled(String $target)
+    public static function isInstalled($target)
     {
         $extension = ucfirst(strtolower($target));
 

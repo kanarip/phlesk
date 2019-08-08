@@ -213,7 +213,7 @@ class Phlesk
 
         @return \Phlesk\Domain|NULL
      */
-    public static function getDomainByGuid(String $domain_guid)
+    public static function getDomainByGuid($domain_guid)
     {
         // Must use \pm_Domain to avoid loops
         $domains = \pm_Domain::getAllDomains();
@@ -259,7 +259,7 @@ class Phlesk
 
         @return \Phlesk\Domain|NULL
      */
-    public static function getDomainByName(String $domain_name)
+    public static function getDomainByName($domain_name)
     {
         // Must use \pm_Domain to avoid loops
         $domains = \pm_Domain::getAllDomains();
@@ -316,7 +316,7 @@ class Phlesk
 
         @return \Phlesk\Domain|NULL
      */
-    public static function getPrimaryDomain(String $domain_guid)
+    public static function getPrimaryDomain($domain_guid)
     {
         $domains = \Phlesk::getAllDomains(true);
 
@@ -336,7 +336,7 @@ class Phlesk
 
         @return Bool
      */
-    public static function isPrimaryDomain(String $domain_guid)
+    public static function isPrimaryDomain($domain_guid)
     {
         $domains = \Phlesk::getAllDomains(true);
 
