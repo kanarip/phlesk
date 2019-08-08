@@ -30,7 +30,7 @@ class RPC
         return $prefs['mailservice'];
     }
 
-    private function _siteMailPrefs(Int $domainID)
+    private function _siteMailPrefs($domainID)
     {
         $request = "
             <mail>
