@@ -47,6 +47,13 @@ class Extension
             }
         }
 
+        // All extensions have their local utilities class.
+        $extension = ucfirst(strtolower($target));
+
+        if (!class_exists("Modules_{$extension}_Utils")) {
+            return false;
+        }
+
         return true;
     }
 
@@ -92,12 +99,19 @@ class Extension
     {
         $extension = ucfirst(strtolower($target));
 
-        $extension_installed_func = "Modules_{$extension}_Install::isInstalled";
-
-        if (method_exists("Modules_{$extension}_Install", "isInstalled")) {
-            return $extension_installed_func();
+        if (!self::isActive($target)) {
+            return false;
         }
 
-        return true;
+        // requires software installation
+        $extInstallClass = "Modules_{$extension}_Install";
+
+        if (class_exists($extInstallClass)) {
+            $instance = $extInstallClass::getInstance();
+
+            if (method_exists($instance, "isInstalled")) {
+                return $instance::isInstalled();
+            }
+        }
     }
 }
