@@ -164,7 +164,7 @@ class Phlesk
                 }
             }
         } else {
-            $domains = \Phlesk::getDomainsByClient($client, $primaryOnly);
+            $domains = \pm_Domain::getDomainsByClient($client, $primaryOnly);
         }
 
         foreach ($domains as $domain) {
