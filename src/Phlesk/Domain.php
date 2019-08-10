@@ -27,96 +27,36 @@ namespace Phlesk;
     @license   GPLv3 (https://www.gnu.org/licenses/gpl.txt)
     @link      https://pxts.ch
  */
-class Domain extends \pm_Domain
+class Domain
 {
     /**
         Disable the integration between the current context and the target module.
 
+        @param \pm_Domain $domain The domain to disable integration for.
+
         @return NULL
      */
-    public function disableIntegration()
+    public static function disableIntegration(\pm_Domain $domain)
     {
         $source = \Phlesk\Context::getModuleId();
 
         \pm_Log::debug("Triggering event 'disable_domain'");
-        \pm_ActionLog::submit('disable_domain', $this->getId(), [$source], []);
+        \pm_ActionLog::submit('disable_domain', $domain->getId(), [$source], []);
     }
 
     /**
         Enable the integration between the current context and the target module.
 
+        @param \pm_Domain $domain The domain to enable integration for.
+
         @return NULL
      */
-    public function enableIntegration()
+    public static function enableIntegration(\pm_Domain $domain)
     {
         $source = \Phlesk\Context::getModuleId();
 
         \pm_Log::debug("Triggering event 'enable_domain'");
-        \pm_ActionLog::submit('enable_domain', $this->getId(), [], [$source]);
-    }
-
-    /**
-        Retrieve a list of all domains.
-
-        Do not use this function. Instead use \Phlesk::getAllDomains();
-
-        @param Boolean $main    Main domains only.
-        @param Boolean $hosting Domains with hosting only.
-        @param Boolean $mail    Domains with mail service only.
-
-        @return Array
-     */
-    public static function getAllDomains($main = false, $hosting = false, $mail = false)
-    {
-        \pm_Log::warn("Use Phlesk::getAllDomains()");
-
-        return \Phlesk::getAllDomains($main, $hosting, $mail);
-    }
-
-    /**
-        Override \pm_Domain::getByGuid().
-
-        Do not use this function. Instead use \Phlesk::getDomainByGuid();
-
-        Needed because \pm_Domain::getGuid() will happily log an error rather than simply
-        return NULL.
-
-        @param String $domain_guid The GUID.
-
-        @return \Phlesk\Domain|NULL
-     */
-    public static function getByGuid($domain_guid)
-    {
-        \pm_Log::warn("Use Phlesk::getDomainByGuid()");
-
-        if ((String)$domain_guid !== $domain_guid) {
-            \pm_Log::warn('\Phlesk\Domain parameter \$domain_guid should be a String.');
-        }
-
-        return \Phlesk::getDomainByGuid((String)$domain_guid);
-    }
-
-    /**
-        Override \pm_Domain::getByDomainId().
-
-        Do not use this function. Instead use \Phlesk::getDomainById();
-
-        Needed because \pm_Domain::getByDomainId() will happily log an error rather than simply
-        return NULL.
-
-        @param Integer $domain_id The ID.
-
-        @return \Phlesk\Domain|NULL
-     */
-    public static function getByDomainId($domain_id)
-    {
-        \pm_Log::warn("Use Phlesk::getDomainById()");
-
-        if ((Integer)$domain_id !== $domain_id) {
-            \pm_Log::warn('\Phlesk\Domain parameter $domain_id should be an Integer.');
-        }
-
-        return \Phlesk::getDomainById((Integer)$domain_id);
+        \pm_ActionLog::submit('enable_domain', $domain->getId(), [], [$source]);
     }
 
     /**
@@ -125,11 +65,13 @@ class Domain extends \pm_Domain
         Needed because \pm_Domain::hasHosting() does not accurately reflect the then-current
         status.
 
+        @param \pm_Domain $domain Determine whether the domain currently has hosting.
+
         @return Boolean
      */
-    public function hasHosting()
+    public static function hasHosting(\pm_Domain $domain)
     {
-        $hasHosting = parent::hasHosting();
+        $hasHosting = $domain->hasHosting();
 
         // If hosting still exists, no need to dig any further.
         if ($hasHosting) {
@@ -137,18 +79,18 @@ class Domain extends \pm_Domain
         }
 
         // \pm_Domain::getByGuid would log an error if the domain no longer exists.
-        $domain = \Phlesk::getDomainByGuid($this->getGuid());
+        $domain = \Phlesk::getDomainByGuid($domain->getGuid());
 
         if (!$domain) {
             // The domain has already disappeared
             return $hasHosting;
         } else {
             // Avoid recursiveness
-            $domain = \pm_Domain::getByGuid($this->getGuid());
+            $domain = \pm_Domain::getByGuid($domain->getGuid());
         }
 
         if ($hasHosting != $domain->hasHosting()) {
-            \pm_Log::debug("\Phlesk\Domain->hasHosting(): Good thing you're here.");
+            \pm_Log::debug("\Phlesk\Domain::hasHosting(): Good thing you're here.");
         }
 
         return $domain->hasHosting();
@@ -160,23 +102,26 @@ class Domain extends \pm_Domain
 
         Needed because the function doesn't exist for \pm_Domain.
 
+        @param \pm_Domain $domain The domain for which to determine mail service availability
+
         @return Boolean
      */
-    public function hasMailService()
+    public static function hasMailService(\pm_Domain $domain)
     {
         $rpc = new \Phlesk\RPC();
-        $result = $rpc->requestMailServiceForDomain($this->getId());
+        $result = $rpc->requestMailServiceForDomain($domain->getId());
         return true;
     }
 
     /**
         List the user accounts for this domain.
 
-        @param Bool $decrypt Decrypt the password.
+        @param \pm_Domain $domain  The domain to list users for.
+        @param Bool       $decrypt Decrypt the password.
 
         @return Array
      */
-    public function listUsers($decrypt = false)
+    public static function listUsers(\pm_Domain $domain, $decrypt = false)
     {
         $users = [];
 
@@ -189,7 +134,7 @@ class Domain extends \pm_Domain
             FROM mail m
                 INNER JOIN accounts a ON m.account_id = a.id
                 INNER JOIN domains d ON m.dom_id = d.id
-            WHERE d.id = {$this->getId()}
+            WHERE d.id = {$domain->getId()}
         ";
 
         $result = $db->query($query);

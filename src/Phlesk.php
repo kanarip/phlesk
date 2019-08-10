@@ -122,23 +122,23 @@ class Phlesk
     /**
         Obtain a list of domains.
 
-        @param Bool  $main          Only return domains that are primary domains for a
+        @param Bool  $primaryOnly   Only return domains that are primary domains for a
                                     subscription.
         @param Bool  $hosting       Only return domains that have hosting enabled.
         @param Bool  $mail          Only return domains that have mail service enabled.
         @param Array $filterMethods An optional function to apply as a filter.
 
-        @return Array Returns a list of \Phlesk\Domain objects.
+        @return Array Returns a list of \pm_Domain objects.
      */
     public static function getAllDomains(
-        $main = false,
+        $primaryOnly = false,
         $hosting = false,
         $mail = false,
         $filterMethods = []
     ) {
         $client = null;
         $domains = [];
-        $pm_domains = [];
+        $result = [];
 
         $module = \Phlesk\Context::getModuleId();
         $extension = ucfirst(strtolower($module));
@@ -152,29 +152,27 @@ class Phlesk
         }
 
         if ($client == null) {
-            $pm_domains = \pm_Domain::getAllDomains($main);
+            $domains = \pm_Domain::getAllDomains($primaryOnly);
         } elseif ($client->isAdmin()) {
-            $pm_domains = \pm_Domain::getAllDomains($main);
+            $domains = \pm_Domain::getAllDomains($primaryOnly);
         } elseif ($client->isReseller()) {
-            $all_domains = \pm_Domain::getAllDomains($main);
+            $all_domains = \pm_Domain::getAllDomains($primaryOnly);
 
             foreach ($all_domains as $domain) {
                 if ($client->hasAccessToDomain($domain->getId())) {
-                    $pm_domains[] = $domain;
+                    $domains[] = $domain;
                 }
             }
         } else {
-            $pm_domains = \Phlesk::getDomainsByClient($client, $main);
+            $domains = \Phlesk::getDomainsByClient($client, $primaryOnly);
         }
 
-        foreach ($pm_domains as $pm_domain) {
-            $domain = new \Phlesk\Domain($pm_domain->getId());
-
-            if ($hosting && !$domain->hasHosting()) {
+        foreach ($domains as $domain) {
+            if ($hosting && !\Phlesk\Domain::hasHosting($domain)) {
                 continue;
             }
 
-            if ($mail && !$domain->hasMailService()) {
+            if ($mail && !\Phlesk\Domain::hasMailService($domain)) {
                 continue;
             }
 
@@ -188,7 +186,6 @@ class Phlesk
                         $result = call_user_func_array($method, [$domain]);
 
                         if (!$result) {
-                            \pm_Log::debug("result: " . var_export($result, true));
                             $skip = true;
                         }
                     }
@@ -196,22 +193,21 @@ class Phlesk
             }
 
             if ($skip) {
-                \pm_Log::debug("skipping {$domain->getName()}");
                 continue;
             }
 
-            $domains[] = $domain;
+            $result[] = $domain;
         }
 
-        return $domains;
+        return $result;
     }
 
     /**
-        Get a \Phlesk\Domain using its GUID.
+        Get a \pm_Domain using its GUID.
 
         @param String $domain_guid The GUID of the domain to find and return.
 
-        @return \Phlesk\Domain|NULL
+        @return \pm_Domain|NULL
      */
     public static function getDomainByGuid($domain_guid)
     {
@@ -220,7 +216,7 @@ class Phlesk
 
         foreach ($domains as $domain) {
             if ($domain->getGuid() == $domain_guid) {
-                return new \Phlesk\Domain($domain->getId());
+                return $domain;
             }
         }
 
@@ -228,24 +224,26 @@ class Phlesk
     }
 
     /**
-        Get a \Phlesk\Domain by its numeric identifier.  Really, you could just use:
+        Get a \pm_Domain by its numeric identifier.  Really, you could just use:
 
         ```php
-           $domain = new \Phlesk\Domain($domain_id);
+           $domain = new \pm_Domain($domain_id);
         ```
+
+        However, using an ID for a non-existent domain will throw an exception.
 
         @param Int $domain_id The ID of the domain to return.
 
-        @return \Phlesk\Domain|NULL
+        @return \pm_Domain|NULL
      */
-    public static function getDomainById(Int $domain_id)
+    public static function getDomainById($domain_id)
     {
         // Must use \pm_Domain to avoid loops
         $domains = \pm_Domain::getAllDomains();
 
         foreach ($domains as $domain) {
             if ($domain->getId() == $domain_id) {
-                return new \Phlesk\Domain($domain_id);
+                return $domain;
             }
         }
 
@@ -253,11 +251,11 @@ class Phlesk
     }
 
     /**
-        Get a \Phlesk\Domain by its name.
+        Get a \pm_Domain by its name.
 
         @param String $domain_name The name of the domain to return.
 
-        @return \Phlesk\Domain|NULL
+        @return \pm_Domain|NULL
      */
     public static function getDomainByName($domain_name)
     {
@@ -266,7 +264,7 @@ class Phlesk
 
         foreach ($domains as $domain) {
             if ($domain->getName() == $domain_name) {
-                return new \Phlesk\Domain($domain->getId());
+                return $domain;
             }
         }
 
@@ -274,37 +272,16 @@ class Phlesk
     }
 
     /**
-        Get a name for a \Phlesk\Domain by its ID.
+        Get a name for a \pm_Domain by its ID.
 
         @param Int $domain_id The ID for the domain to obtain the name for.
 
         @return String
      */
-    public static function getDomainNameByID(Int $domain_id)
+    public static function getDomainNameByID($domain_id)
     {
         $domain = \Phlesk::getDomainById($domain_id);
         return $domain->getName();
-    }
-
-    /**
-        Get domains for a client.
-
-        @param \pm_Client $client   The pm_Client to return domains for.
-        @param Bool       $mainOnly Only return main domains, not sub-domains, nor aliases.
-
-        @return Array A list with \Phlesk\Domain items.
-     */
-    public static function getDomainsByClient(\pm_Client $client, $mainOnly = false)
-    {
-        $domains = array();
-
-        $pm_domains = \pm_Domain::getDomainsByClient($client, $mainOnly);
-
-        foreach ($pm_domains as $pm_domain) {
-            $domains[] = new \Phlesk\Domain($pm_domain->getId());
-        }
-
-        return $domains;
     }
 
     /**
@@ -314,7 +291,7 @@ class Phlesk
 
         @param String $domain_guid The GUID for the domain to retain the primary domain for.
 
-        @return \Phlesk\Domain|NULL
+        @return \pm_Domain|NULL
      */
     public static function getPrimaryDomain($domain_guid)
     {

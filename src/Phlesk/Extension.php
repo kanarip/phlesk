@@ -58,14 +58,14 @@ class Extension
     }
 
     /**
-        Verify the extension $name is enabled for \Phlesk\Domain $domain.
+        Verify the extension $name is enabled for \pm_Domain $domain.
 
-        @param String         $target The name of the extension.
-        @param \Phlesk\Domain $domain The domain
+        @param String     $target The name of the extension.
+        @param \pm_Domain $domain The domain
 
         @return Bool
      */
-    public static function isEnabled($target, \Phlesk\Domain $domain)
+    public static function isEnabled($target, \pm_Domain $domain)
     {
         if (!self::isActive($target)) {
             return false;

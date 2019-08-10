@@ -34,23 +34,23 @@ class Subscription
         Obtain the (primary) domains for a subscription, by referencing one of the subscription's
         domains.
 
-        @param \Phlesk\Domain $domain   The Phlesk domain from which to go up, then back down.
-        @param Bool           $mainOnly Whether or not to include sub-domains and alias domains.
+        @param \pm_Domain $domain      The Phlesk domain from which to go up, then back down.
+        @param Bool       $primaryOnly Whether or not to include sub-domains and alias domains.
 
-        @return Array A list containing \Phlesk\Domain items for the subscription.
+        @return Array A list containing \pm_Domain items for the subscription.
      */
-    public static function getDomains(\Phlesk\Domain $domain, $mainOnly = true)
+    public static function getDomains(\pm_Domain $domain, $primaryOnly = true)
     {
         // No way up to the subscription, go through client
         $client = $domain->getClient();
         $homepath = $domain->getHomePath();
 
         $subscription_domains = [];
-        $domains = \pm_Domain::getDomainsByClient($client);
+        $domains = \pm_Domain::getDomainsByClient($client, $primaryOnly);
 
-        foreach ($domains as $domain) {
-            if ($domain->getHomePath() == $homepath) {
-                $subscription_domains[] = new \Phlesk\Domain($domain->getId());
+        foreach ($domains as $_domain) {
+            if ($_domain->getHomePath() == $homepath) {
+                $subscription_domains[] = $_domain;
             }
         }
 
