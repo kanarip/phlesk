@@ -63,7 +63,7 @@ class Context extends \pm_Context
 
         @return Mixed The value of the parameter $return.
      */
-    public static function out($target, &$return = null)
+    public static function out($target, $return = null)
     {
         $source = self::getModuleId();
 
