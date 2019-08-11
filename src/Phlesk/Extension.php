@@ -58,7 +58,11 @@ class Extension
     }
 
     /**
-        Verify the extension $name is enabled for \pm_Domain $domain.
+        Verify the extension $target is enabled for \pm_Domain $domain.
+
+        This includes verifying the extension $target is active, that the source extension is
+        installed, verifying the target extension has its software installed, and that the target
+        extension permission is enabled.
 
         @param String     $target The name of the extension.
         @param \pm_Domain $domain The domain
@@ -68,16 +72,25 @@ class Extension
     public static function isEnabled($target, \pm_Domain $domain)
     {
         if (!self::isActive($target)) {
+            \pm_Log::debug("Extension {$target} is not active or not available.");
             return false;
         }
 
         if (!self::isInstalled(\Phlesk\Context::getModuleId())) {
+            \pm_Log::debug(
+                sprintf(
+                    "Extension %s does not have its software installed.",
+                    \Phlesk\Context::getModuleId()
+                )
+            );
+
             return false;
         }
 
         $module = \Phlesk\Context::in($target);
 
         if (!self::isInstalled($target)) {
+            \pm_Log::debug("Extension {$target} does not have its software installed.");
             return false;
         }
 
