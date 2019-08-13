@@ -138,7 +138,7 @@ class Phlesk
     ) {
         $client = null;
         $domains = [];
-        $result = [];
+        $results = [];
 
         $module = \Phlesk\Context::getModuleId();
         $extension = ucfirst(strtolower($module));
@@ -196,10 +196,10 @@ class Phlesk
                 continue;
             }
 
-            $result[] = $domain;
+            $results[] = $domain;
         }
 
-        return $result;
+        return $results;
     }
 
     /**
