@@ -96,7 +96,18 @@ class Extension
 
         $extension = ucfirst(strtolower($target));
 
-        $permission = (bool)$domain->hasPermission("manage_{$target}");
+        $permission = false;
+
+        if (class_exists("Modules_{$extension}_Permissions")) {
+            if (is_callable(["Modules_{$extension}_Permissions", "getPermissions"], false, $c)) {
+                $permissions = $c();
+                foreach ($permissions as $_permission => $attrs) {
+                    if (!$permission) {
+                        $permission = (bool)$domain->hasPermission($_permission);
+                    }
+                }
+            }
+        }
 
         return \Phlesk\Context::out($module, $permission);
     }
