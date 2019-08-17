@@ -98,15 +98,26 @@ class Extension
 
         $permission = false;
 
+        // Attempt to include the file that defines the permission class.
+        @include_once "/usr/local/psa/admin/plib/modules/{$target}/hooks/Permissions.php";
+
         if (class_exists("Modules_{$extension}_Permissions")) {
             if (is_callable(["Modules_{$extension}_Permissions", "getPermissions"], false, $c)) {
                 $permissions = $c();
                 foreach ($permissions as $_permission => $attrs) {
+                    \pm_Log::debug("Testing permission {$_permission}");
+
                     if (!$permission) {
                         $permission = (bool)$domain->hasPermission($_permission);
                     }
                 }
+            } else {
+                \pm_Log::debug("No callable Modules_{$extension}_Permissions::getPermissions()");
             }
+        } else {
+            \pm_Log::debug("Could not find class Modules_{$extension}_Permissions");
+
+            $permission = (bool)$domain->hasPermission("manage_{$target}");
         }
 
         return \Phlesk\Context::out($module, $permission);
