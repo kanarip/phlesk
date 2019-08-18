@@ -43,6 +43,7 @@ class Extension
                 $extension = \pm_Extension::getById(strtolower($target));
                 return $extension->isActive();
             } catch (\pm_Exception $e) {
+                \pm_Log::debug("\pm_Extension::getById('{$target}') threw an exception");
                 return false;
             }
         }
@@ -51,6 +52,7 @@ class Extension
         $extension = ucfirst(strtolower($target));
 
         if (!class_exists("Modules_{$extension}_Utils")) {
+            \pm_Log::debug("No class Modules_{$extension}_Utils found");
             return false;
         }
 
@@ -135,6 +137,7 @@ class Extension
         $extension = ucfirst(strtolower($target));
 
         if (!self::isActive($target)) {
+            \pm_Log::debug("Extension {$target} is not active.");
             return false;
         }
 
@@ -148,5 +151,7 @@ class Extension
                 return $instance::isInstalled();
             }
         }
+
+        return true;
     }
 }
